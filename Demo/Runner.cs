@@ -1,10 +1,13 @@
-﻿namespace Demo
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Demo
 {
     class Runner
     {
-        static void Main(string[] args)
+        static Task Main(string[] args)
         {
-            new DemoProgram().Run();
+            return new DemoProgram().Run(CancellationToken.None);
         }
     }
 }

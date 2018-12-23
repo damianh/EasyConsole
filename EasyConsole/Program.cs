@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyConsole
 {
@@ -9,21 +11,15 @@ namespace EasyConsole
     {
         protected string Title { get; set; }
 
-        public bool BreadcrumbHeader { get; private set; }
+        public bool BreadcrumbHeader { get; }
 
-        protected Page CurrentPage
-        {
-            get
-            {
-                return (History.Any()) ? History.Peek() : null;
-            }
-        }
+        protected Page CurrentPage => (History.Any()) ? History.Peek() : null;
 
-        private Dictionary<Type, Page> Pages { get; set; }
+        private Dictionary<Type, Page> Pages { get; }
 
-        public Stack<Page> History { get; private set; }
+        public Stack<Page> History { get; }
 
-        public bool NavigationEnabled { get { return History.Count > 1; } }
+        public bool NavigationEnabled => History.Count > 1;
 
         protected Program(string title, bool breadcrumbHeader)
         {
@@ -33,13 +29,13 @@ namespace EasyConsole
             BreadcrumbHeader = breadcrumbHeader;
         }
 
-        public virtual void Run()
+        public virtual async Task Run(CancellationToken cancellationToken)
         {
             try
             {
                 Console.Title = Title;
 
-                CurrentPage.Display();
+                await CurrentPage.Display(cancellationToken);
             }
             catch (Exception e)
             {
@@ -56,7 +52,7 @@ namespace EasyConsole
 
         public void AddPage(Page page)
         {
-            Type pageType = page.GetType();
+            var pageType = page.GetType();
 
             if (Pages.ContainsKey(pageType))
                 Pages[pageType] = page;
@@ -64,18 +60,18 @@ namespace EasyConsole
                 Pages.Add(pageType, page);
         }
 
-        public void NavigateHome()
+        public Task NavigateHome(CancellationToken cancellationToken)
         {
             while (History.Count > 1)
                 History.Pop();
 
             Console.Clear();
-            CurrentPage.Display();
+            return CurrentPage.Display(cancellationToken);
         }
 
         public T SetPage<T>() where T : Page
         {
-            Type pageType = typeof(T);
+            var pageType = typeof(T);
 
             if (CurrentPage != null && CurrentPage.GetType() == pageType)
                 return CurrentPage as T;
@@ -83,8 +79,7 @@ namespace EasyConsole
             // leave the current page
 
             // select the new page
-            Page nextPage;
-            if (!Pages.TryGetValue(pageType, out nextPage))
+            if (!Pages.TryGetValue(pageType, out var nextPage))
                 throw new KeyNotFoundException("The given page \"{0}\" was not present in the program".Format(pageType));
 
             // enter the new page
@@ -93,21 +88,21 @@ namespace EasyConsole
             return CurrentPage as T;
         }
 
-        public T NavigateTo<T>() where T : Page
+        public async Task<T> NavigateTo<T>(CancellationToken cancellationToken) where T : Page
         {
             SetPage<T>();
 
             Console.Clear();
-            CurrentPage.Display();
+            await CurrentPage.Display(cancellationToken);
             return CurrentPage as T;
         }
 
-        public Page NavigateBack()
+        public async Task<Page> NavigateBack(CancellationToken cancellationToken)
         {
             History.Pop();
 
             Console.Clear();
-            CurrentPage.Display();
+            await CurrentPage.Display(cancellationToken);
             return CurrentPage;
         }
     }

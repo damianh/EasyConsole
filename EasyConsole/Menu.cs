@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyConsole
 {
@@ -13,26 +15,37 @@ namespace EasyConsole
             Options = new List<Option>();
         }
 
-        public void Display()
+        public Task Display(CancellationToken cancellationToken)
         {
-            for (int i = 0; i < Options.Count; i++)
+            for (var i = 0; i < Options.Count; i++)
             {
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
-            int choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
+            var choice = Input.ReadInt("Choose an option:", min: 1, max: Options.Count);
 
-            Options[choice - 1].Callback();
+            return Options[choice - 1].Callback(cancellationToken);
         }
 
-        public Menu Add(string option, Action callback)
+        public Menu AddSync(string option, Action callback)
         {
-            return Add(new Option(option, callback));
+            Task CallbackAsync(CancellationToken _)
+            {
+                callback();
+                return Task.CompletedTask;
+            }
+
+            return Add(new Option(option, CallbackAsync));
         }
 
         public Menu Add(Option option)
         {
             Options.Add(option);
             return this;
+        }
+
+        public Menu Add(string option, Func<CancellationToken, Task> callback)
+        {
+            return Add(new Option(option, callback));
         }
 
         public bool Contains(string option)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyConsole
 {
@@ -43,20 +45,24 @@ namespace EasyConsole
             return Console.ReadLine();
         }
 
-        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        public static async Task<TEnum> ReadEnum<TEnum>(string prompt, CancellationToken cancellationToken) 
+            where TEnum : struct, IConvertible, IComparable, IFormattable
         {
-            Type type = typeof(TEnum);
+            var type = typeof(TEnum);
 
             if (!type.IsEnum)
                 throw new ArgumentException("TEnum must be an enumerated type");
 
             Output.WriteLine(prompt);
-            Menu menu = new Menu();
+            var menu = new Menu();
 
-            TEnum choice = default(TEnum);
+            var choice = default(TEnum);
             foreach (var value in Enum.GetValues(type))
-                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum)value; });
-            menu.Display();
+            {
+                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum) value; });
+            }
+
+            await menu.Display(cancellationToken);
 
             return choice;
         }

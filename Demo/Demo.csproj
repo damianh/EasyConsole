@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Demo</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyConsole\EasyConsole.csproj" />

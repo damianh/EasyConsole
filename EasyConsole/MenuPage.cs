@@ -1,4 +1,7 @@
-﻿namespace EasyConsole
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace EasyConsole
 {
     public abstract class MenuPage : Page
     {
@@ -13,14 +16,16 @@
                 Menu.Add(option);
         }
 
-        public override void Display()
+        public override async Task Display(CancellationToken cancellationToken)
         {
-            base.Display();
+            await base.Display(cancellationToken);
 
             if (Program.NavigationEnabled && !Menu.Contains("Go back"))
-                Menu.Add("Go back", () => { Program.NavigateBack(); });
+            {
+                Menu.AddAsync("Go back", async ct => await Program.NavigateBack(ct));
+            }
 
-            Menu.Display();
+            await Menu.Display(cancellationToken);
         }
     }
 }

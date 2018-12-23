@@ -1,4 +1,6 @@
-﻿using EasyConsole;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using EasyConsole;
 
 namespace Demo.Pages
 {
@@ -9,14 +11,14 @@ namespace Demo.Pages
         {
         }
 
-        public override void Display()
+        public override async Task Display(CancellationToken cancellationToken)
         {
-            base.Display();
+            await base.Display(cancellationToken);
 
             Output.WriteLine("Hello from Page 2");
 
             Input.ReadString("Press [Enter] to navigate home");
-            Program.NavigateHome();
+            await Program.NavigateHome(cancellationToken);
         }
     }
 }

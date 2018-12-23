@@ -1,5 +1,7 @@
 ﻿using EasyConsole;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Demo.Pages
 {
@@ -10,15 +12,15 @@ namespace Demo.Pages
         {
         }
 
-        public override void Display()
+        public override async Task Display(CancellationToken cancellationToken)
         {
-            base.Display();
+            await base.Display(cancellationToken);
 
-            Fruit input = Input.ReadEnum<Fruit>("Select a fruit");
+            var input = await Input.ReadEnum<Fruit>("Select a fruit", cancellationToken);
             Output.WriteLine(ConsoleColor.Green, "You selected {0}", input);
 
             Input.ReadString("Press [Enter] to navigate home");
-            Program.NavigateHome();
+            await Program.NavigateHome(cancellationToken);
         }
     }
 

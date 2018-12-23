@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyConsole
 {
     public abstract class Page
     {
-        public string Title { get; private set; }
+        public string Title { get; }
 
         public Program Program { get; set; }
 
@@ -15,13 +17,15 @@ namespace EasyConsole
             Program = program;
         }
 
-        public virtual void Display()
+        public virtual Task Display(CancellationToken cancellationToken)
         {
             if (Program.History.Count > 1 && Program.BreadcrumbHeader)
             {
-                string breadcrumb = null;
-                foreach (var title in Program.History.Select((page) => page.Title).Reverse())
-                    breadcrumb += title + " > ";
+                var breadcrumb = Program
+                    .History
+                    .Select((page) => page.Title)
+                    .Reverse()
+                    .Aggregate<string, string>(null, (current, title) => current + (title + " > "));
                 breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
                 Console.WriteLine(breadcrumb);
             }
@@ -30,6 +34,7 @@ namespace EasyConsole
                 Console.WriteLine(Title);
             }
             Console.WriteLine("---");
+            return Task.CompletedTask;
         }
     }
 }

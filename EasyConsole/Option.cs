@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyConsole
 {
     public class Option
     {
-        public string Name { get; private set; }
-        public Action Callback { get; private set; }
+        public string Name { get; }
 
-        public Option(string name, Action callback)
+        public Func<CancellationToken, Task> Callback { get; }
+
+        public Option(string name, Func<CancellationToken, Task> callback)
         {
             Name = name;
             Callback = callback;
