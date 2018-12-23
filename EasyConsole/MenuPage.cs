@@ -22,7 +22,7 @@ namespace EasyConsole
 
             if (Program.NavigationEnabled && !Menu.Contains("Go back"))
             {
-                Menu.AddAsync("Go back", async ct => await Program.NavigateBack(ct));
+                Menu.Add("Go back", Program.NavigateBack);
             }
 
             await Menu.Display(cancellationToken);
