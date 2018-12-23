@@ -9,9 +9,12 @@
     build a simple menu interface for a .NET console application. This is a fork
     that supports netstandard2.0 and async.
     </Description>
+    <Summary>A simple menu library for console applications.</Summary>
     <LicenseUrl>https://github.com/damianh/EasyConsole/blob/master/LICENSE</LicenseUrl>
     <ProjectUrl>https://github.com/damianh/EasyConsole</ProjectUrl>
     <ReleaseNotes>Async by default</ReleaseNotes>
+    <RepositoryUrl>https://github.com/damianh/EasyConsole/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Version>2.0.0</Version>
   </PropertyGroup>
 </Project>
