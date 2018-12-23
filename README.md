@@ -8,6 +8,7 @@ targets `netstandard2.0` and thus works in `netcoreapp2.0` or later and `net461`
 * Automatically numbered menus
 * Fluent creation of menus
 * Input/Output helpers
+* Aync by default
 
 ## Quick Start
 ### Menu
@@ -15,8 +16,11 @@ The base functionality of the library is to provide an easy way to create consol
 
 ```c#
 var menu = new EasyConsole.Menu()
-      .Add("foo", () => Console.WriteLine("foo selected"))
-      .Add("bar", () => Console.WriteLine("bar selected"));
+      .AddSync("foo", () => Console.WriteLine("foo selected"))
+      .Add("bar", (ct) => { 
+          Console.WriteLine("bar selected");
+          return Task.CompletedTask;
+        });
 menu.Display();
 ```
 ![Menu Demo](http://i.imgur.com/GXeYOm0.png)
@@ -69,9 +73,9 @@ class MainPage : MenuPage
 {
     public MainPage(Program program)
         : base("Main Page", program,
-              new Option("Page 1", () => program.NavigateTo<Page1>()),
-              new Option("Page 2", () => program.NavigateTo<Page2>()),
-              new Option("Input", () => program.NavigateTo<InputPage>()))
+              new Option("Page 1", program.NavigateTo<Page1>),
+              new Option("Page 2", program.NavigateTo<Page2>),
+              new Option("Input", program.NavigateTo<InputPage>))
     {
     }
 }
