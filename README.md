@@ -1,4 +1,4 @@
-# EasyConsoleStg [![NuGet](https://img.shields.io/nuget/v/EasyConsoleStd.svg)](https://www.nuget.org/packages/EasyConsoleStd/)
+# EasyConsoleStd [![NuGet](https://img.shields.io/nuget/v/EasyConsoleStd.svg)](https://www.nuget.org/packages/EasyConsoleStd/)
 EasyConsoleStd is a library to make it easier for developers to build a simple menu interface for a .NET console application. This is a fork of [EasyConsole](https://github.com/splttingatms/EasyConsole) that
 targets `netstandard2.0` and thus works in `netcoreapp2.0` or later and `net461` or later.
 
